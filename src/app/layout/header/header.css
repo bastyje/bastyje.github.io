@@ -1,0 +1,25 @@
+ul {
+  margin: 0;
+  padding: 20px 40px;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+header {
+  border-bottom: 2px solid var(--primary-900);
+  background-color: var(--primary-500);
+}
+
+a {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--white-800);
+
+  &:hover {
+    color: var(--white-300);
+    transition: all 200ms;
+  }
+}

@@ -1,0 +1,14 @@
+main {
+  height: calc(100vh - 133px);
+  width: calc(100vw - 80px);
+  background: var(--primary-100);
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.spacer {
+  flex: 0 0 40%;
+}
