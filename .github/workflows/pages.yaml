@@ -7,13 +7,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build static files
-        id: build
-        run: |
-          npm run gh
+        run: npm run gh
       - name: Create artifact
         id: artifact
         uses: actions/upload-pages-artifact@v3
