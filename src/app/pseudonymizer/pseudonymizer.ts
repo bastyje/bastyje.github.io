@@ -79,7 +79,7 @@ export class Pseudonymizer {
     console.log(newSheet);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, newSheet, sheetName);
-    XLSX.writeFile(workbook, `${name}__sanitized.${ext}`, {});
+    XLSX.writeFile(workbook, `${name.replace('.xlsx', '')}__sanitized.${ext}`, {});
   }
 
   private writeMapping(name: string, ext: string, x: HashRawAndRow[]): void {
@@ -87,6 +87,6 @@ export class Pseudonymizer {
     const mappingSheet = XLSX.utils.json_to_sheet(mapping);
     const mappingWorkbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(mappingWorkbook, mappingSheet);
-    XLSX.writeFile(mappingWorkbook, `${name}__mapping.${ext}`);
+    XLSX.writeFile(mappingWorkbook, `${name.replace('.xlsx', '')}__mapping.${ext}`);
   }
 }

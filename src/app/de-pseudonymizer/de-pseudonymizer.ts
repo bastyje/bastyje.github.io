@@ -86,6 +86,6 @@ export class DePseudonymizer {
     console.log(newSheet);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, newSheet, this.clinicalWb!.sheetName!);
-    XLSX.writeFile(workbook, `${this.clinicalName}__pesel.xlsx`, {});
+    XLSX.writeFile(workbook, `${this.clinicalName?.replace('.xlsx', '')}__pesel.xlsx`, {});
   }
 }
