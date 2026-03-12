@@ -38,7 +38,7 @@ export class DePseudonymizer {
   onMappingFileSelected(file: File): void {
     this.error.set([])
     file.arrayBuffer().then(b => {
-      const wb = getValidatedWorkbook(b, this.hashSheetNo(), this.peselColNo(), false);
+      const wb = getValidatedWorkbook(b, this.hashSheetNo(), this.peselColNo(), true);
       if (!wb.canProceed) {
         this.error.set(wb.errors);
         return;
