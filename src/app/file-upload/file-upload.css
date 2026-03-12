@@ -1,0 +1,22 @@
+.file-upload {
+  gap: 20px;
+  width: 100%;
+  display: flex;
+
+  & > span {
+    font-size: 14px;
+    white-space: nowrap;
+    align-self: center;
+    justify-self: flex-start;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+    max-width: 150px;
+  }
+
+  & > input[type="file"] {
+    display: none;
+  }
+}

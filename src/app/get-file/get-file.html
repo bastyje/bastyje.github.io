@@ -1,0 +1,12 @@
+<div class="form">
+  <label for="years-no">Number of years:</label>
+  <input id="years-no" type="number" [(ngModel)]="yearsNo">
+
+  @for (column of optional; track $index) {
+    <label [for]="column.name">{{column.name}}:</label>
+    <input [id]="column.name" type="checkbox" [(ngModel)]="column.selected">
+  }
+
+  <button id="get-file" app-button (click)="onClick()">Get file</button>
+</div>
+

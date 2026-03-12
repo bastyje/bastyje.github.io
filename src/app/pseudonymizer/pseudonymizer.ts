@@ -2,106 +2,65 @@ import { Component, signal } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { FormsModule } from '@angular/forms';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
-import { from, map, mergeMap, Observable, of, toArray } from 'rxjs';
-
-type HashAndRaw = {
-  hash: string;
-  raw: string;
-}
-
-type HashRawAndRow = HashAndRaw & {
-  row: any
-}
+import { from, map, mergeMap, Observable, toArray } from 'rxjs';
+import { FileUpload } from '../file-upload/file-upload';
+import { RowError } from '../file-definition/pesel-validation';
+import { getValidatedWorkbook, HashAndRaw, HashRawAndRow } from '../file-definition/workbook';
+import { Errors } from '../errors/errors';
 
 @Component({
   selector: 'app-pseudonymizer',
   imports: [
-    FormsModule
+    FormsModule,
+    FileUpload,
+    Errors
   ],
   templateUrl: './pseudonymizer.html',
   styleUrl: './pseudonymizer.css',
 })
 export class Pseudonymizer {
-  readonly emptyFile = '___empty_file___';
-
-  error = signal<string[]>([]);
+  error = signal<RowError[]>([]);
   sheetNo = signal(1);
   colNo = signal(1);
-  file = signal<File>(<File>{name: this.emptyFile})
 
-  onFileSelected(event: Event): void {
-    this.error.set([]);
-
-    const target = event.target as HTMLInputElement;
-    const file = target.files![0];
-    this.file.set(file);
-    this.file().arrayBuffer().then(b => this.openWorkbook(b, this.file().name));
+  onFileSelected(file: File): void {
+    this.error.set([])
+    file.arrayBuffer().then(b => this.openWorkbook(b, file.name));
   }
 
   private openWorkbook(buf: ArrayBuffer, name: string) {
-    const wb = XLSX.read(buf);
-    if (this.sheetNo() > wb.SheetNames.length) {
-      console.error('wrong no')
+    const wb = getValidatedWorkbook(buf, this.sheetNo(), this.colNo(), true);
+    if (!wb.canProceed) {
+      this.error.set(wb.errors);
       return;
     }
 
-    const sheetName = wb.SheetNames[this.sheetNo() - 1];
-    const sheet = wb.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(sheet, {
-      blankrows: false,
-      header: 'A'
-    });
-
-    const maxCols = json.reduce((prev: number, curr: any) => Math.max(prev, Object.keys(curr).length), 0)
-    const threshold = Math.ceil(maxCols * 0.1);
-    const filtered = json.filter((x: any) => Object.keys(x).length >= threshold) as any[];
-
-    const header = filtered[0];
-    const content = filtered.slice(1);
-
-    console.log(content);
-
-    this.hashAll(content).subscribe(x => {
-      const newSheet = XLSX.utils.json_to_sheet([header, ...x.map(y => y.row)], {skipHeader: true});
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, newSheet, sheetName);
+    this.hashAll(wb.content!).subscribe(x => {
       const [n, ext] = name.split('.');
-      XLSX.writeFile(workbook, `${n}__sanitized.${ext}`, {});
-
-      const mapping = x.map(x => (<HashAndRaw>{raw: x.raw, hash: x.hash}))
-      const mappingSheet = XLSX.utils.json_to_sheet(mapping);
-      const mappingWorkbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(mappingWorkbook, mappingSheet);
-      XLSX.writeFile(mappingWorkbook, `${n}__mapping.${ext}`);
+      this.writePseudonymized(wb.header, wb.sheetName!, name, ext, x)
+      this.writeMapping(n, ext, x)
     });
   }
 
+
   private hashAll(content: any[]): Observable<HashRawAndRow[]> {
-    const colNo = this.colNo() - 1;
-    console.log(XLSX.utils.encode_col(colNo))
     return from(content).pipe(
-      mergeMap(row => this.hashRow(row, colNo)),
+      mergeMap(row => this.hashRow(row, XLSX.utils.encode_col(this.colNo() - 1))),
       toArray()
     );
   }
 
-  private hashRow(row: any, colNo: number): Observable<HashRawAndRow> {
-    const col = row[XLSX.utils.encode_col(colNo)];
+  private hashRow(row: any, colNo: string): Observable<HashRawAndRow> {
+    const col = row[colNo];
     let val = col.toString();
 
     if (val.length === 10) {
-      this.error.update(x => [...x, `PESEL “${val}” is one digit too short. A leading “0” has been automatically added, as Excel sometimes removes it. If this is incorrect, please verify and correct your input.`])
       val = `0${val}`;
-    } else if (val.length < 10) {
-      this.error.update(x => [...x, `PESEL '${val}' is too short (${val.length} characters)`])
-    } else if (val.length > 11) {
-      this.error.update(x => [...x, `PESEL '${val}' is too long (${val.length} characters)`])
-      return of()
     }
 
     const newRow = {...row};
     return this.hash(val).pipe(map(h => {
-      newRow[XLSX.utils.encode_col(colNo)] = h;
+      newRow[colNo] = h.hash;
       return { ...h, row: newRow };
     }))
   }
@@ -114,4 +73,20 @@ export class Pseudonymizer {
       ),
       map(x => ({hash: x, raw: input}))
     );
+
+  private writePseudonymized(header: any, sheetName: string, name: string, ext: string, x: HashRawAndRow[]): void {
+    const newSheet = XLSX.utils.json_to_sheet([header, ...x.map(y => y.row)], {skipHeader: true});
+    console.log(newSheet);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, newSheet, sheetName);
+    XLSX.writeFile(workbook, `${name}__sanitized.${ext}`, {});
+  }
+
+  private writeMapping(name: string, ext: string, x: HashRawAndRow[]): void {
+    const mapping = x.map(x => (<HashAndRaw>{raw: x.raw, hash: x.hash}))
+    const mappingSheet = XLSX.utils.json_to_sheet(mapping);
+    const mappingWorkbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(mappingWorkbook, mappingSheet);
+    XLSX.writeFile(mappingWorkbook, `${name}__mapping.${ext}`);
+  }
 }

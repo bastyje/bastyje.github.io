@@ -1,0 +1,38 @@
+:host {
+  max-height: 100%;
+  height: 100%;
+}
+
+.scrollable {
+  max-height: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.errors {
+  font-size: var(--font-size-300);
+  width: 100%;
+  border-collapse: collapse;
+  max-width: 700px;
+}
+
+.errors th {
+  position: sticky;
+  top: 0;
+  background: var(--primary-100);
+  z-index: 1;
+  text-align: left;
+}
+
+.number {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.red {
+  color: var(--red-500);
+}
+
+.yellow {
+  color: var(--yellow-500);
+}

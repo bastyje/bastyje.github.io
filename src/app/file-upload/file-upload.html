@@ -1,0 +1,16 @@
+<div class="file-upload">
+  <input
+    [id]="id"
+    type="file"
+    accept=".xlsx,.xls"
+    (input)="onFileSelected($event)"
+  >
+  <label app-button [for]="id">Choose File</label>
+  <span [title]="file().name">
+      @if (file().name == emptyFile) {
+        No file selected...
+      } @else {
+        {{ file().name }}
+      }
+  </span>
+</div>

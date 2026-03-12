@@ -21,6 +21,8 @@ body {
 
   --red-500: hsl(-6, 80%, 44%);
 
+  --yellow-500: hsl(32, 92%, 51%);
+
   --font-primary: 'Lato', sans-serif;
 
   --font-size-300: 14px;
@@ -37,6 +39,15 @@ input {
   border: 2px solid var(--primary-700);
 }
 
+input[type=number] {
+  width: 50px;
+}
+
+input[type=checkbox] {
+  appearance: checkbox;
+  accent-color: var(--primary-700);
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -46,4 +57,9 @@ input[type="number"]::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+button {
+  border: none;
+  padding: 0;
 }

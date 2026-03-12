@@ -1,4 +1,5 @@
 main {
+  max-height: calc(100vh - 133px);
   height: calc(100vh - 133px);
   width: calc(100vw - 80px);
   background: var(--primary-100);
@@ -7,8 +8,4 @@ main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.spacer {
-  flex: 0 0 40%;
 }

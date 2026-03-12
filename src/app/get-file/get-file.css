@@ -1,0 +1,13 @@
+.form {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  max-width: 600px;
+}
+
+#get-file {
+  align-self: center;
+  justify-self: center;
+  grid-column: 1/-1;
+}

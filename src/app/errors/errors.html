@@ -1,0 +1,18 @@
+@if (error()?.length) {
+  <div class="scrollable">
+    <table class="errors">
+      <thead>
+      <th class="number">Row</th>
+      <th>Error</th>
+      </thead>
+      <tbody>
+        @for (err of error(); track $index) {
+          <tr [class]="err.canProceed ? 'yellow' : 'red'">
+            <td class="number">{{err.rowNo}}</td>
+            <td>{{err.error}}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

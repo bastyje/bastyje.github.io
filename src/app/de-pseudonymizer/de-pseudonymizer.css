@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+  max-height: 100%;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 700px;
+  gap: 50px;
+  height: 100%;
+}
+
+.help {
+  text-align: justify;
+  font-size: 16px;
+}
+
+.form {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: 1fr 1fr 2fr;
+  gap: 10px;
+}
+
+app-file-upload {
+  align-self: center;
+  justify-self: center;
+
+  &#hash {
+    grid-column: 1/3;
+  }
+
+  &#clinical {
+    grid-column: 3/-1;
+  }
+}
+
+h2 {
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+
+  &#mapping {
+    grid-column: 1/3;
+  }
+
+  &#clinical {
+    grid-column: 3/-1;
+  }
+}
+
+app-errors {
+  max-height: 100%;
+}

@@ -1,1 +1,39 @@
-de-pseudonymizer works!
+<div class="main">
+  <span class="help">
+    Upload two Excel files:
+    one with the patients’ clinical data and
+    one with the PESEL hash mapping.
+    The system will combine them and generate
+    a new file where the patient data is matched
+    with the correct PESEL numbers.
+
+    IMPORTANT: refresh page between de-pseudonymization sessions!
+  </span>
+
+  @if (notAll()) {
+    <em>Not all PESEL numbers found!</em>
+  }
+
+  <div class="form">
+    <h2 id="mapping">Mappping</h2>
+    <h2 id="clinical">Clinical</h2>
+
+    <label for="hash-sheet-no">Sheet number:</label>
+    <input id="hash-sheet-no" type="number" [(ngModel)]="hashSheetNo">
+    <label for="clinical-sheet-no">Sheet number:</label>
+    <input id="clinical-sheet-no" type="number" [(ngModel)]="clinicalSheetNo">
+
+    <label for="hash-col-no">Hash column number:</label>
+    <input id="hash-col-no" type="number" [(ngModel)]="hashColNo">
+
+    <label for="clinical-col-no">Hash column number:</label>
+    <input id="clinical-col-no" type="number" [(ngModel)]="clinicalColNo">
+    <label for="pesel-col-no">PESEL column number:</label>
+    <input id="pesel-col-no" type="number" [(ngModel)]="peselColNo">
+
+    <app-file-upload id="hash" (fileSelected)="onMappingFileSelected($event)" />
+    <app-file-upload id="clinical" (fileSelected)="onClinicalFileSelected($event)" />
+  </div>
+</div>
+
+<app-errors [error]="error()"/>

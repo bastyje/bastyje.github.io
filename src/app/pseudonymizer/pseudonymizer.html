@@ -1,38 +1,21 @@
-<span class="help">
-  Upload an Excel file containing a PESEL column. As a result, you will receive a file with the same content, but with the PESEL column hashed.
-  Additionally, you will receive a separate file containing the mapping between the original PESEL values and their corresponding hashes.
-</span>
+<div class="main">
+  <span class="help">
+    Upload an Excel file containing a PESEL column.
+    As a result, you will receive a file with the
+    same content, but with the PESEL column hashed.
+    Additionally, you will receive a separate file
+    containing the mapping between the original
+    PESEL values and their corresponding hashes.
+  </span>
 
-<div class="form">
-  <label for="sheet-no">Sheet number:</label>
-  <input id="sheet-no" type="number" [(ngModel)]="sheetNo">
-  <label for="col-no">Column number:</label>
-  <input id="col-no" type="number" [(ngModel)]="colNo">
+  <div class="form">
+    <label for="sheet-no">Sheet number:</label>
+    <input id="sheet-no" type="number" [(ngModel)]="sheetNo">
+    <label for="col-no">Column number:</label>
+    <input id="col-no" type="number" [(ngModel)]="colNo">
 
-  <div class="file-upload">
-    <input
-      id="file-to-pseudonymize"
-      type="file"
-      accept=".xlsx,.xls"
-      (input)="onFileSelected($event)"
-    >
-    <label for="file-to-pseudonymize">Choose File</label>
-    <span [title]="file().name">
-      @if (file().name == emptyFile) {
-        No file selected...
-      } @else {
-        {{ file().name }}
-      }
-    </span>
+    <app-file-upload (fileSelected)="onFileSelected($event)" />
   </div>
 </div>
 
-@if (error()) {
-  <ul>
-    @for (err of error(); track $index) {
-      <li>
-        <em class="err">{{err}}</em>
-      </li>
-    }
-  </ul>
-}
+<app-errors [error]="error()"/>
